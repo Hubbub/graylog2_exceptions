@@ -54,7 +54,7 @@ class TestGraylog2Exceptions < Test::Unit::TestCase
     assert_equal Socket.gethostname, json["host"]
     assert_equal ex.backtrace[0].split(":")[1], json["line"]
     assert_equal ex.backtrace[0].split(":")[0], json["file"]
-    assert_equal({ "uri" => "/test" }, json["env"])
+    assert_equal({ "uri" => "/test" }, json["_env"])
   end
   
   def test_send_exception_to_graylog2_with_custom_parameters
