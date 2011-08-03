@@ -30,14 +30,14 @@ class Graylog2Exceptions
       @app.call(env)
     rescue Exception => err
       # An exception has been raised. Send to Graylog2!
-      send_to_graylog2(err)
+      send_to_graylog2(err, env)
 
       # Raise the exception again to pass back to app.
       raise
     end
   end
 
-  def send_to_graylog2 err
+  def send_to_graylog2 err, env = {}
     begin
       notifier = GELF::Notifier.new(@args.delete(:hostname), @args.delete(:port), @args.delete(:max_chunk_size))
       notifier.notify!({
@@ -48,6 +48,7 @@ class Graylog2Exceptions
         :host => @args.delete(:local_app_name),
         :file => err.backtrace[0].split(":")[0],
         :line => err.backtrace[0].split(":")[1],
+        :env => env
 			}.merge(@args))
     rescue => i_err
       puts "Graylog2 Exception logger. Could not send message: " + i_err.message

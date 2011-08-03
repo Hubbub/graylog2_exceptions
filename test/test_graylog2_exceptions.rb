@@ -42,8 +42,9 @@ class TestGraylog2Exceptions < Test::Unit::TestCase
 
   def test_send_exception_to_graylog2_without_custom_parameters
     ex = build_exception
+    env = { "uri" => "/test" }
     c = Graylog2Exceptions.new(nil, {})
-    sent = Zlib::Inflate.inflate(c.send_to_graylog2(ex).join)
+    sent = Zlib::Inflate.inflate(c.send_to_graylog2(ex, env).join)
     json = JSON.parse(sent)
 
     assert json["short_message"].include?('undefined method `klopfer!')
@@ -53,6 +54,7 @@ class TestGraylog2Exceptions < Test::Unit::TestCase
     assert_equal Socket.gethostname, json["host"]
     assert_equal ex.backtrace[0].split(":")[1], json["line"]
     assert_equal ex.backtrace[0].split(":")[0], json["file"]
+    assert_equal({ "uri" => "/test" }, json["env"])
   end
   
   def test_send_exception_to_graylog2_with_custom_parameters
