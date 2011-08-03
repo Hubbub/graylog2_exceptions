@@ -48,7 +48,8 @@ class Graylog2Exceptions
         :host => @args.delete(:local_app_name),
         :file => err.backtrace[0].split(":")[0],
         :line => err.backtrace[0].split(":")[1],
-        :_env => env
+        :_request => env,
+        :_environment => ENV
 			}.merge(@args))
     rescue => i_err
       puts "Graylog2 Exception logger. Could not send message: " + i_err.message
